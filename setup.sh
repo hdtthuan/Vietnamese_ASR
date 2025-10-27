@@ -1,44 +1,46 @@
-# Update latest ubuntu packages
-apt-get update
-apt-get install -y curl git-core
+#!/bin/bash
+set -e
 
-# Install and enable git lfs
-curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && apt-get install -y git-lfs && git lfs install
+echo "=============================="
+echo "🚀 BẮT ĐẦU CÀI MÔI TRƯỜNG VIETNAMESE ASR"
+echo "=============================="
 
-# Set up ssh key to connect to github
-mkdir -p ~/.ssh && chmod 700 ~/.ssh
+# === 1. CẬP NHẬT VÀ CÀI ĐẶT CƠ BẢN ===
+apt-get update -y && apt-get upgrade -y
+apt-get install -y git wget unzip curl ffmpeg build-essential gdown python3-pip
 
-cat > ~/.ssh/id_ed25519 <<- EOM
------BEGIN OPENSSH PRIVATE KEY-----
------END OPENSSH PRIVATE KEY-----
-EOM
+# === 2. CẬP NHẬT PIP ===
+python3 -m pip install --upgrade pip setuptools wheel
 
-chmod 400 ~/.ssh/id_ed25519
+# === 3. KIỂM TRA GPU ===
+echo "🔧 Kiểm tra GPU..."
+if command -v nvidia-smi &> /dev/null; then
+  nvidia-smi
+  echo "✅ GPU sẵn sàng!"
+else
+  echo "⚠️ Không phát hiện GPU (sẽ train bằng CPU, chậm hơn)"
+fi
 
-ssh-keygen -F github.com || ssh-keyscan github.com >> ~/.ssh/known_hosts
+# === 4. CÀI CÁC THƯ VIỆN YÊU CẦU ===
+echo "📦 Cài đặt dependencies..."
+pip install --no-cache-dir -r requirement.txt
 
-git config --global user.email "nduc90313@gmail.com"
-git config --global user.name "ducido"
+# === 5. CẤU HÌNH WANDB VÀ HUGGINGFACE CACHE ===
+export WANDB_API_KEY="e896b413a2e8bfb2509f89a27cf130ab7dd54840"
+export WANDB_PROJECT="phowhisper-vietnamese-accents"
+export HF_HOME="/root/.cache/huggingface"
+export TRANSFORMERS_CACHE="$HF_HOME/transformers"
+export HF_DATASETS_CACHE="$HF_HOME/datasets"
+mkdir -p $TRANSFORMERS_CACHE $HF_DATASETS_CACHE
 
-# Download COCO dataset
-wget http://images.cocodataset.org/zips/train2017.zip
-wget http://images.cocodataset.org/zips/val2017.zip
-wget http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+# === 6. KIỂM TRA PHIÊN BẢN ===
+echo "=============================="
+echo "✅ Môi trường đã sẵn sàng!"
+echo "Python: $(python3 --version)"
+echo "Torch: $(python3 -c 'import torch; print(torch.__version__)')"
+echo "CUDA available: $(python3 -c 'import torch; print(torch.cuda.is_available())')"
+echo "=============================="
 
-# Create target directory
-mkdir -p coco_2017
-mkdir -p coco_2017/annotations
-
-# Unzip into coco_dataset/
-unzip train2017.zip -d coco_2017/
-unzip val2017.zip -d coco_2017/
-unzip annotations_trainval2017.zip -d coco_2017/
-
-# Clone a repo
-git clone https://github.com/longzw1997/Open-GroundingDino.git
-cd Open-GroundingDino
-pip install -r requirements.txt 
-cd models/GroundingDINO/ops
-python setup.py build install
-python test.py
-cd ../../..
+echo ""
+echo "🎯 Tiếp theo: tải dataset bằng lệnh"
+echo "bash setup_data.sh"
