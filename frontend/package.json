@@ -1,0 +1,27 @@
+{
+  "name": "AccentDetectApp",
+  "version": "0.1.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "lint": "eslint .",
+    "start": "react-native start",
+    "test": "jest",
+    "expo": "expo start",
+    "openapi-ts": "openapi-ts"
+  },
+  "dependencies": {
+    "expo": "^53.0.0",
+    "expo-secure-store": "^15.0.7",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-paper": "^5.14.5"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.85.2",
+    "@types/react": "^19.2.2",
+    "typescript": "~5.8.3"
+  }
+}

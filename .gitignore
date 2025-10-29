@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+./*.py[cod]
+.Python
+env/
+.env
+venv/
+.venv/
+backend/.venv/
+frontend/.env
+
+# Distribution / packaging
+build/
+dist/
+./*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+package-lock.json
+
+# Expo / React Native
+.expo/
+.expo-shared/
+android/
+ios/
+web-build/
+*.keystore
+
+# Expo prebuild / gradle
+android/**/build/
+android/**/app/build/
+android/.gradle/
+
+
+# Logs
+./*.log
+npm-debug.log*
+
+# Generated API clients
+frontend/src/api/client/
+
+# Misc
+coverage/
+.pytest_cache/
+./*.sqlite3
