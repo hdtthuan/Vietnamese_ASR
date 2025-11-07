@@ -1,4 +1,4 @@
-# 🇻🇳 Vietnamese_ASR
+# Vietnamese_ASR
 
 ### Dialect-Aware Vietnamese Automated Speech Recognition
 
