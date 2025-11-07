@@ -173,26 +173,6 @@ If you use or reference this work, please cite:
 }
 ```
 
----
-
-## 🧑‍💻 Contributors
-
-| Name                 | Role                                   | Institution         |
-| -------------------- | -------------------------------------- | ------------------- |
-| **Thuận Hoàng**      | Lead Researcher, ASR Model Development | FPT University HCMC |
-| **[Your Teammates]** | Data Processing, Evaluation            | FPT University HCMC |
-| **PhuongNT316**      | Academic Supervisor                    | FPT University HCMC |
-
----
-
-## 📬 Contact
-
-📧 **Email:** [[your.email@fpt.edu.vn](mailto:your.email@fpt.edu.vn)]
-🏫 **Institution:** Department of Artificial Intelligence & Data Science, FPT University, Ho Chi Minh City
-🌐 **GitHub:** [github.com/<your-username>/Vietnamese_ASR](https://github.com/<your-username>/Vietnamese_ASR)
-
----
-
 ## 🪄 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
