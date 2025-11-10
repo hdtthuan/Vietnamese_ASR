@@ -46,3 +46,5 @@ frontend/src/api/client/
 coverage/
 .pytest_cache/
 ./*.sqlite3
+
+fine_tune_model/
