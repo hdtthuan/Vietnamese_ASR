@@ -6,6 +6,7 @@ import numpy as np
 import torchaudio
 import torch
 from faster_whisper import WhisperModel
+from audio_recorder_streamlit import audio_recorder
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "fine_tune_model")
 
@@ -70,16 +71,39 @@ def main():
     st.success(f"Model loaded on {device}")
     st.markdown("---")
 
-    # File uploader
-    uploaded_file = st.file_uploader(
-        "Upload audio file", type=["wav", "mp3", "m4a", "flac", "ogg"], accept_multiple_files=False
+    mode = st.selectbox(
+        "Choose input method:",
+        options=["Upload file", "Record with microphone"],
+        index=0,
     )
-
+    
     uploaded_bytes = None
+    file_name = None
 
-    if uploaded_file is not None:
-        uploaded_bytes = uploaded_file.read()
-        st.audio(uploaded_bytes)
+    if mode == "Upload file":
+        # File uploader
+        uploaded_file = st.file_uploader(
+            "Upload audio file", type=["wav", "mp3", "m4a", "flac", "ogg"], accept_multiple_files=False
+        )
+
+        if uploaded_file is not None:
+            uploaded_bytes = uploaded_file.read()
+            file_name = uploaded_file.name
+            st.audio(uploaded_bytes)
+    else:
+        audio_bytes = audio_recorder(
+            text="Record / Stop", 
+            recording_color="#e74c3c", 
+            neutral_color="#2ecc71", 
+            icon_name="microphone", 
+            sample_rate=16000,
+            icon_size="1x"
+        )
+        st.info("Press the button below to start recording (press again to stop):")
+        if audio_bytes:
+            st.audio(audio_bytes, format="audio/wav")
+            uploaded_bytes = audio_bytes
+            file_name = "recorded_audio.wav"
 
     if st.button("Transcribe"):
         if uploaded_bytes is None:
@@ -88,7 +112,7 @@ def main():
             with st.spinner("Transcribing..."):
                 start = time.time()
                 try:
-                    audio_np, sr = load_audio(uploaded_bytes, uploaded_file.name, target_sr=16000)
+                    audio_np, sr = load_audio(uploaded_bytes, file_name, target_sr=16000)
                     text = transcribe_audio_faster_whisper(model, audio_np, sr)
                 except Exception as e:
                     st.error(f"Transcription failed: {e}")
