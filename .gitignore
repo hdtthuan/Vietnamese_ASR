@@ -48,3 +48,4 @@ coverage/
 ./*.sqlite3
 
 fine_tune_model/
+model_checkpoint-4600/
