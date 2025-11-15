@@ -1,186 +1,254 @@
-# Vietnamese_ASR
+# 🇻🇳 Vietnamese ASR – Dialect-Aware Speech Recognition
 
-### Dialect-Aware Vietnamese Automated Speech Recognition
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" />
-  <img src="https://img.shields.io/badge/PyTorch-2.2+-red?logo=pytorch" />
-  <img src="https://img.shields.io/badge/HuggingFace-Transformers-yellow?logo=huggingface" />
-  <img src="https://img.shields.io/badge/Whisper-PhoWhisper-green" />
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
-</p>
+Fine-tuned Whisper-based model on **ViMD Dataset (63 provinces, 3 dialects)**
 
 ---
 
-## 📖 Overview
+## 📌 Overview
 
-**Vietnamese_ASR** is an end-to-end **Automatic Speech Recognition (ASR)** project designed to **optimize speech-to-text accuracy across Vietnamese dialects**.
-The project focuses on fine-tuning large-scale pretrained models (e.g., **PhoWhisper**, **Wav2Vec2**, **Conformer**) using a **dialect-balanced corpus (ViMD)** covering **63 provinces across 3 major dialect regions** — Northern, Central, and Southern Vietnam.
+This repository contains the complete pipeline for building a **Vietnamese Automatic Speech Recognition (ASR)** system specialized for **regional dialects**.
+The project includes:
 
-This research-driven system aims to address the **acoustic and lexical variability** of regional Vietnamese, improving performance for underrepresented accents.
+* 🔧 **Full preprocessing + training pipeline** for fine-tuning Whisper/PhoWhisper
+* 🧪 **Evaluation framework** (coming in the next folder)
+* 🖥️ **Streamlit demo UI** for quick inference
+* 📦 **Model conversion utilities** for deployment (CT2 / ONNX / HuggingFace format)
+* 🚀 Ready-to-run scripts for VastAI, Google Drive, and local machines
 
----
-
-## 🚀 Key Features
-
-* 🔈 **Dialect-Aware Fine-Tuning** — Adapted from Whisper multilingual backbone using the ViMD dataset
-* 🧹 **Robust Preprocessing Pipeline** — Noise trimming, silence removal, normalization, and filtering
-* 🧠 **Transformer-Based Architecture** — Leverages PhoWhisper / Wav2Vec2-CTC frameworks
-* 📊 **Comprehensive Evaluation** — Metrics include WER (Word Error Rate) and CER (Character Error Rate)
-* 🌏 **Regional Accent Adaptation** — Balanced training data across 63 provinces
-* ⚙️ **Server-Ready Scripts** — Preconfigured for training on **Vast.ai** or local GPU setups
+This project is built for the **FPT University DSP391m Capstone**, with a strong focus on real-world ASR performance across dialects.
 
 ---
 
-## 🧩 Project Structure
+## 📁 Repository Structure
 
 ```
 Vietnamese_ASR/
 │
-├── data/                      # Processed datasets or symbolic links to Drive
-│   ├── train/                 
-│   ├── valid/
-│   └── test/
+├── demo/                     # Streamlit demo interface
+│   └── demo.py
 │
-├── notebooks/                 # Jupyter notebooks for experiments
-│   ├── preprocessing.ipynb
-│   ├── train_whisper.ipynb
-│   └── evaluate_model.ipynb
+├── fine_tune_model/          # This folder includes model weights and tokenizers, há to be downloaded from Google Drive
+│   └── (copy model files from Google Drive here)
 │
-├── scripts/                   # Helper scripts for setup & training
-│   ├── setup.sh
-│   ├── setup_data.sh
-│   ├── train.py
-│   └── evaluate.py
+├── evaluation/               # (Sẽ thêm) Evaluation scripts for comparing models
+│   └── ...
 │
-├── models/                    # Saved checkpoints and fine-tuned weights
-│   └── phowhisper_vimd.pt
+├── convert_model.py          # Convert model → CT2, ONNX, HF format
+├── train.py                  # Training / fine-tuning script
 │
-├── results/                   # Logs, plots, and reports
-│   ├── train_logs/
-│   ├── eval_reports/
-│   └── figures/
+├── setup.sh                  # Environment setup for VastAI / Linux
+├── setup_data.sh             # Download + extract processed ViMD dataset
 │
-├── requirements.txt           # Python dependencies
-├── README.md                  # Project documentation
-└── LICENSE
+├── requirement.txt
+└── README.md                 # (this file)
 ```
 
 ---
 
-## 🧠 Methodology
+## 🔧 Installation
 
-1. **Dataset Preparation (ViMD)**
-
-   * 102.5 hours of Vietnamese speech
-   * Collected from 63 provinces across 3 dialects
-   * Balanced by region and gender
-
-2. **Preprocessing**
-
-   * Audio normalization (16 kHz)
-   * Silence trimming (`librosa.effects.trim`)
-   * Text normalization (lowercasing, punctuation removal)
-
-3. **Model Fine-Tuning**
-
-   * Base model: **PhoWhisper (from Whisper-Small)**
-   * Framework: **Hugging Face Transformers + PyTorch**
-   * Optimizer: AdamW
-   * Learning rate: 1e-5
-   * Scheduler: Linear decay
-
-4. **Evaluation Metrics**
-
-   * **Word Error Rate (WER)**
-   * **Character Error Rate (CER)**
-
----
-
-## 📈 Results Summary
-
-| Model                       | Dataset | WER ↓     | CER ↓     | Notes                         |
-| --------------------------- | ------- | --------- | --------- | ----------------------------- |
-| Whisper Multilingual (base) | ViMD    | 22.4%     | 18.7%     | Baseline                      |
-| **PhoWhisper (fine-tuned)** | ViMD    | **16.8%** | **13.2%** | Improved dialectal robustness |
-
-> Fine-tuning improved recognition performance by over **25% relative reduction in WER**, especially on Central and Southern dialects.
-
----
-
-## 🧰 Setup Instructions
-
-### 1️⃣ Clone the repository
+### 1️⃣ Clone repo
 
 ```bash
-git clone https://github.com/<your-username>/Vietnamese_ASR.git
+git clone https://github.com/<your_repo>/Vietnamese_ASR.git
 cd Vietnamese_ASR
 ```
 
-### 2️⃣ Install dependencies
+### 2️⃣ Create environment
+
+Use conda or venv:
 
 ```bash
-pip install -r requirements.txt
+bash setup.sh
 ```
 
-### 3️⃣ Configure environment
-
-If running on **Vast.ai** or similar GPU servers:
+Or manually:
 
 ```bash
-bash scripts/setup.sh
-bash scripts/setup_data.sh
-```
-
-### 4️⃣ Run training
-
-```bash
-python scripts/train.py
-```
-
-### 5️⃣ Evaluate
-
-```bash
-python scripts/evaluate.py
+pip install -r requirement.txt
 ```
 
 ---
 
-## 🌐 Dataset
+## 📥 Prepare Model Files
 
-**Vietnamese Multiregional Dataset (ViMD)**
+Your teammate provides a Google Drive folder containing:
 
-* **Source:** Collected and processed by project team
-* **Composition:** 63 provinces, 3 dialects (North, Central, South)
-* **Balance:** Gender-balanced, real-world speech conditions
+```
+train_outputs/
+└── phowhisper_vimd/
+    └── ctranslate2_model/
+```
 
-> Dataset released for research use only.
-> For access or collaboration, please contact the project team.
+Copy toàn bộ files trong `ctranslate2_model/` vào:
+
+```
+Vietnamese_ASR/fine_tune_model/
+```
 
 ---
 
-## 🔬 Citation
+## 🎧 Streamlit Demo
 
-If you use or reference this work, please cite:
+### 1️⃣ Go to demo folder
 
-```
-@article{VietnameseASR2025,
-  title={Dialect-Aware Fine-Tuning of PhoWhisper for Vietnamese Automatic Speech Recognition},
-  author={Hoang, Thuan and Nguyen, [Co-author]},
-  year={2025},
-  journal={FPT University Capstone Project – DSP391m},
-  note={FPT University, Ho Chi Minh City}
-}
+```bash
+cd demo
 ```
 
-## 🪄 License
+### 2️⃣ Run demo
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+```bash
+streamlit run demo.py
+```
+
+Sau đó truy cập:
+👉 [http://localhost:8501](http://localhost:8501)
 
 ---
 
-Would you like me to:
+## 🏋️ Training
 
-* make it **bilingual (English–Vietnamese)** for publication or portfolio use,
-  or
-* keep it **English-only** for GitHub professionalism?
+### 1️⃣ Prepare dataset
+
+Processed ViMD dataset stored on Google Drive.
+
+Run:
+
+```bash
+bash setup_data.sh
+```
+
+This script will:
+
+* Mount or download from Google Drive
+* Extract dataset
+* Organize into `train/` – `valid/` – `test/` folders
+
+### 2️⃣ Start fine-tuning
+
+```bash
+python train.py --config configs/vimd_config.yaml
+```
+
+Training script includes:
+
+* Augmentation
+* Mixed precision
+* Gradient accumulation
+* Checkpoint saving
+* Logging (loss, WER, CER)
+
+---
+
+## 🔄 Model Conversion
+
+To convert the fine-tuned model into **CTranslate2** for fast inference:
+
+```bash
+python convert_model.py --source <path_to_model> --output fine_tune_model/
+```
+
+Supports:
+
+* CTranslate2
+* HuggingFace
+* ONNX (coming soon)
+
+---
+
+## 🧪 Evaluation (Upcoming Folder)
+
+A new folder `/evaluation` will contain:
+
+* 📊 Compare Whisper base vs large vs PhoWhisper vs your fine-tuned model
+* 🏷️ Evaluate per dialect: North / Central / South
+* 🏅 Compute WER / CER / Speaker-level performance
+* 🔉 Noise robustness evaluation
+* 📈 Visualizations (confusion matrix, error samples)
+
+Example (coming soon):
+
+```
+evaluation/
+│   evaluate_ct2.py
+│   evaluate_hf.py
+│   compare_models.ipynb
+│   dialect_breakdown.csv
+```
+
+---
+
+## 🧠 Model Details
+
+* Base model: **PhoWhisper** (Vietnamese-specialized Whisper variant)
+* Fine-tuning dataset: **ViMD – 102.5 hours – 63 provinces**
+* Tokenizer: SentencePiece
+* Feature extractor: 80-channel Mel-spectrogram
+* Optimizer: AdamW
+* Metrics: WER / CER (character-level suited for Vietnamese)
+
+---
+
+## 🗂 Dataset
+
+We use **ViMD**, a large-scale Vietnamese dialect dataset:
+
+| Region  | Provinces | %   |
+| ------- | --------- | --- |
+| North   | 25        | 40% |
+| Central | 19        | 30% |
+| South   | 19        | 30% |
+
+Includes:
+
+* 1.5M text characters
+* 80k+ spoken utterances
+* Natural speech (non-studio)
+* Full demographic metadata
+
+---
+
+## 🚀 Deployment (Future Work)
+
+Planned additions:
+
+* FastAPI real-time ASR server
+* gRPC service
+* Mobile-ready model export
+* Websocket streaming
+
+---
+
+## 🤝 Contributors
+
+* **Thuận Hoàng** – AI Engineer
+* **Khoa Châu** – Model Training / Demo
+* **ViMD Team** – Dataset providers
+* FPT University – Faculty of AI & DS
+
+---
+
+## 📄 License
+
+MIT License
+(Feel free to use, modify, and cite our work.)
+
+---
+
+## 📬 Contact
+
+For questions or collaboration:
+
+📧 **[kodtt1234@gmail.com](mailto:kodtt1234@gmail.com)**
+
+---
+
+Nếu bạn muốn, tôi có thể thêm:
+
+✅ Badges (Python version, license, model size, WER score)
+✅ Thêm hình minh họa kiến trúc Whisper
+✅ Banner đẹp cho GitHub
+✅ Tạo “demo video” hướng dẫn trong README
+
+Bạn muốn mở rộng README theo hướng nào?
