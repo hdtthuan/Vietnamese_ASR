@@ -72,7 +72,6 @@ pip install -r requirement.txt
 
 ## 📥 Prepare Model Files
 
-Your teammate provides a Google Drive folder containing:
 
 ```
 train_outputs/
@@ -80,7 +79,7 @@ train_outputs/
     └── ctranslate2_model/
 ```
 
-Copy toàn bộ files trong `ctranslate2_model/` vào:
+Copy the whole files `ctranslate2_model/` to:
 
 ```
 Vietnamese_ASR/fine_tune_model/
