@@ -21,9 +21,9 @@ from audio_recorder_streamlit import audio_recorder
 
 @st.cache_resource
 def load_faster_whisper_model(model_dir):
-    """Load faster-whisper model and automatically select device (GPU/CPU)"""
     if not os.path.isdir(model_dir):
-        st.error(f"Model folder not found at: {model_dir}")
+        st.error(f"Model directory not found at: {model_dir}")
+        st.error("Please make sure you have run the convert_model.py script and that the MODEL_DIR path is correct.")
         return None, None
 
     if torch.cuda.is_available():
@@ -37,10 +37,6 @@ def load_faster_whisper_model(model_dir):
     return model, device
 
 def load_audio(file_bytes: bytes, file_name: str = "audio.wav", target_sr: int = 16000):
-    """
-    Load audio (from bytes) with librosa.
-    Librosa automatically resample to target_sr and convert to mono.
-    """
     ext = os.path.splitext(file_name)[1] or ".wav"
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
     try:
@@ -61,8 +57,6 @@ def load_audio(file_bytes: bytes, file_name: str = "audio.wav", target_sr: int =
     return audio_np, sr 
 
 def transcribe_audio_faster_whisper(model, audio_np: np.ndarray, sr: int):
-    """Run transcription with faster-whisper and return text"""
-    
     segments, info = model.transcribe(audio_np, beam_size=5, vad_filter=True)
     text = " ".join([seg.text for seg in segments])
     return text
@@ -71,10 +65,10 @@ def main():
     st.set_page_config(page_title="PhoWhisper Faster Whisper Demo", layout="centered")
     st.title("PhoWhisper Faster Whisper Demo")
     st.write(
-        "Upload an audio file (wav, mp3, m4a...) or record a sound."
+        "Upload an audio file (wav, mp3, m4a...) or record audio, then press Transcribe."
     )
 
-    with st.spinner("Loading Faster Whisper..."):
+    with st.spinner("Loading Faster Whisper model..."):
         model, device = load_faster_whisper_model(MODEL_DIR)
         if model is None:
             return
@@ -85,7 +79,7 @@ def main():
     # Chọn chế độ: Upload hoặc Ghi âm
     input_method = st.selectbox(
         "Select input method:",
-        options=["Upload file", "Record by microphone"],
+        options=["Upload file", "Record with microphone"],
         index=0,
     )
     
@@ -94,7 +88,7 @@ def main():
 
     if input_method == "Upload file":
         uploaded_file = st.file_uploader(
-            "Upload file audio", type=["wav", "mp3", "m4a", "flac", "ogg"], accept_multiple_files=False
+            "Upload an audio file", type=["wav", "mp3", "m4a", "flac", "ogg"], accept_multiple_files=False
         )
 
         if uploaded_file is not None:
@@ -118,7 +112,7 @@ def main():
 
     if st.button("Transcribe"):
         if uploaded_bytes is None:
-            st.warning("Please upload or record an audio file first..")
+            st.warning("Please upload or record an audio file first.")
         else:
             with st.spinner("Transcribing..."):
                 start = time.time()
@@ -126,14 +120,14 @@ def main():
                     audio_np, sr = load_audio(uploaded_bytes, file_name, target_sr=16000)
                     text = transcribe_audio_faster_whisper(model, audio_np, sr)
                 except Exception as e:
-                    st.error(f"Transcribe failed: {e}")
+                    st.error(f"Transcription failed: {e}")
                     return
                 
                 duration = time.time() - start
 
-            st.success("Completed!")
-            st.write(f"Process time: {duration:.2f} seconds")
-            st.text_area("Transcribe text", value=text, height=150, disabled=True)
+            st.success("Done!")
+            st.write(f"_Processing time: {duration:.2f} seconds_")
+            st.text_area("Transcribed Text", value=text, height=150, disabled=True)
 
 if __name__ == "__main__":
     main()
