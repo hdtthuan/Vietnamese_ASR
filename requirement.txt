@@ -15,5 +15,5 @@ evaluate
 jiwer
 wandb
 streamlit
-fast-whisper
+faster-whisper
 audio_recorder_streamlit
