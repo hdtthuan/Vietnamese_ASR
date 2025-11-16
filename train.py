@@ -186,9 +186,9 @@ def normalize_path(p: str) -> str:
         return p
     if p.startswith("/kaggle/input/data-vimd/ViMD_Dataset_Processed"):
         tail = p.split("ViMD_Dataset_Processed", 1)[-1].lstrip("/")
-        return os.path.join(BASE_DIR, tail)
+        return os.path.join(BASE_DATA_DIR, tail)
     if not os.path.isabs(p):
-        return os.path.join(BASE_DIR, p)
+        return os.path.join(BASE_DATA_DIR, p)
     return p
 
 # AUDIO AUGMENTATION
